@@ -2,7 +2,7 @@ const app = Vue.createApp({
     data(){
         return {
             gamePlaying : false,
-            userChar : '', 
+            userChar : 'X', // default 
             gameOver : false,
             userWon: false,
             isTie : false,
@@ -74,6 +74,7 @@ const app = Vue.createApp({
             this.playingGrid[randRow][randCol] = robotChar;
         },
         contains(searchArray, array){
+
             let isIn = false;
             // searching the search array to see if it contains the array
             if (searchArray.length === 0){
@@ -85,6 +86,9 @@ const app = Vue.createApp({
             return isIn; 
         }, 
         playUserTurn(row, col){
+            if (this.gameOver){
+                return; // user is clicking after game 
+            }
             const availablePos = this.getFreePos(); // get the currently open positions 
             const positions = [row, col]; // where the user clicked 
             if (!this.contains(availablePos, positions) ){
@@ -100,11 +104,12 @@ const app = Vue.createApp({
                 // robot turn 
                 this.playBotTurn(); 
                 // check to see if the bot won this game during this round 
-                this.gameOver = this.isGameOver(); 
+                this.gameOver = this.isGameOver();
             }
 
         },
         endingMessage(){
+
             if(this.userWon){
                  return "You won!"; 
             }if (!this.isTie){
