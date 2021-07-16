@@ -18,14 +18,19 @@
     </header>
     <section id="assignment">
         <div id = "assignment-div">
+          <!-- Starting prompt -->
+          <div v-if = "!gamePlaying">
+            <h1>Choose your player: {{userChar}}</h1>
+            <button @click="userChar = 'X'">X</button>
+            <button @click="userChar = 'O'">O</button>
+          </div>
           <table v-if="gamePlaying">
               <tr v-for ="(row, rowIndex) in playingGrid">
-                  <td v-for="(column, colIndex)  in row">{{column}}{{rowIndex}}{{colIndex}}</td>
+                  <td v-for="(column, colIndex)  in row" @click="playUserTurn(rowIndex, colIndex)">{{column}}</td>
               </tr>
           </table>
-          <input v-if="gamePlaying" v-model= "nextPos" :disabled = "gameOver" placeholder = "Row Num and Col Num"  type="text">
-          <button @click="playUserTurn" v-if="gamePlaying" :disabled = "gameOver">Apply Turn</button>
-          <h1 v-if="gameOver">Game over. {{userWon?'Congratulations, you won!':'Robot is the winner.'}}</h1>
+          <!-- This needs to account for a tie.... -->
+          <h1 v-if="gameOver">Game over. {{endingMessage()}}</h1>
           <button @click="resetGame">Play {{!gamePlaying? 'Game':'Again'}}</button>
         </div>
     </section>

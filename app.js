@@ -2,9 +2,10 @@ const app = Vue.createApp({
     data(){
         return {
             gamePlaying : false,
+            userChar : '', 
             gameOver : false,
-            userWon: false, 
-            nextPos: '', 
+            userWon: false,
+            isTie : false,
             playingGrid: [
                 ['_', '_', '_'],
                 ['_', '_', '_'],
@@ -15,9 +16,9 @@ const app = Vue.createApp({
     },
     methods:{
         isGameOver(){
-            if (this.getFreePos().length === 0){
-                return true; // game is obviously over 
-            }
+            // this will track a tie -- if noMorePos is true but gamewon is false -- no winner 
+            let noMorePos = (this.getFreePos().length === 0); 
+            console.log("No more pos: ", noMorePos); 
             let gameWon = false; 
             // rows 
             this.playingGrid.forEach((row)=>{
@@ -43,7 +44,9 @@ const app = Vue.createApp({
                 console.log(" in columns: ", gameWon);
                 console.log( column); 
             }
-            return gameWon; 
+            this.isTie = (noMorePos && !gameWon);
+            console.log("this.isTie", this.isTie); 
+            return (gameWon || this.isTie); 
 
         }, 
         getFreePos(){
@@ -64,7 +67,11 @@ const app = Vue.createApp({
                 return; // no more available positions     
             }
             const [randRow, randCol] = availablePos[Math.floor(Math.random()*availablePos.length)];
-            this.playingGrid[randRow][randCol] = 'O';
+            let robotChar = 'O'; 
+            if (this.userChar === "O"){
+                robotChar = 'X'; 
+            }
+            this.playingGrid[randRow][randCol] = robotChar;
         },
         contains(searchArray, array){
             let isIn = false;
@@ -77,31 +84,34 @@ const app = Vue.createApp({
             }); 
             return isIn; 
         }, 
-        playUserTurn(){
-            const positions = this.nextPos.split(' ').map( (element) => parseInt(element)); // convert strings to ints in the map 
-            const availablePos = this.getFreePos();
-            if (positions.length !== 2){
-
-                alert("Please enter value such as: 0 1"); 
-
-            } else if (positions.length === 2 && !this.contains(availablePos, positions) ){
+        playUserTurn(row, col){
+            const availablePos = this.getFreePos(); // get the currently open positions 
+            const positions = [row, col]; // where the user clicked 
+            if (!this.contains(availablePos, positions) ){
 
                 alert(`row ${positions[0]}, and col ${positions[1]} already taken!`); 
 
             }else { // valid position 
                 const [row,col] = positions;
-                this.playingGrid[row][col] = 'X';
+                this.playingGrid[row][col] = this.userChar;
                 // check if the user won the game during this round 
                 this.gameOver = this.isGameOver();
-                this.userWon = this.gameOver;
+                this.userWon = (this.gameOver && !this.isTie); // case when game is over and it was a tie
                 // robot turn 
                 this.playBotTurn(); 
                 // check to see if the bot won this game during this round 
                 this.gameOver = this.isGameOver(); 
             }
-            // reset the input field 
-            this.nextPos = '';
 
+        },
+        endingMessage(){
+            if(this.userWon){
+                 return "You won!"; 
+            }if (!this.isTie){
+                return "The bot won"; 
+            }else{
+                return "Tie."; 
+            }
         }, 
         resetGame(){
             this.gamePlaying = true; 
