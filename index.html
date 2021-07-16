@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vue Basics</title>
+    <!-- <link
+      href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
+      rel="stylesheet"
+    /> -->
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://unpkg.com/vue@next" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <header>
+      <h1>Tic Tac Toe</h1>
+    </header>
+    <section id="assignment">
+        <div id = "assignment-div">
+          <table v-if="gamePlaying">
+              <tr v-for ="(row, rowIndex) in playingGrid">
+                  <td v-for="(column, colIndex)  in row">{{column}}{{rowIndex}}{{colIndex}}</td>
+              </tr>
+          </table>
+          <input v-if="gamePlaying" v-model= "nextPos" :disabled = "gameOver" placeholder = "Row Num and Col Num"  type="text">
+          <button @click="playUserTurn" v-if="gamePlaying" :disabled = "gameOver">Apply Turn</button>
+          <h1 v-if="gameOver">Game over. {{userWon?'Congratulations, you won!':'Robot is the winner.'}}</h1>
+          <button @click="resetGame">Play {{!gamePlaying? 'Game':'Again'}}</button>
+        </div>
+    </section>
+  </body>
+</html>
