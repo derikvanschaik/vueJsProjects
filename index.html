@@ -3,36 +3,48 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vue Basics</title>
-    <link
+    <title>BMI CAlCULATOR</title>
+    <!-- <link
       href="https://fonts.googleapis.com/css2?family=Jost:wght@400;700&display=swap"
       rel="stylesheet"
-    />
+    /> -->
     <link rel="stylesheet" href="styles.css" />
     <script src="https://unpkg.com/vue@next" defer></script>
     <script src="app.js" defer></script>
   </head>
   <body>
     <header>
-      <h1>Tic Tac Toe</h1>
+      <h1>Bmi Calculator</h1>
     </header>
     <section id="assignment">
-        <div id = "assignment-div">
-          <!-- Starting prompt -->
-          <div v-if = "!gamePlaying">
-            <h1>Choose your player: {{userChar}}</h1>
-            <button class = "choice-button" @click="userChar = 'X'">X</button>
-            <button class = "choice-button" @click="userChar = 'O'">O</button>
-          </div>
-          <table v-if="gamePlaying">
-              <tr v-for ="(row, rowIndex) in playingGrid">
-                  <td v-for="(column, colIndex)  in row" @click="playUserTurn(rowIndex, colIndex)">{{column}}</td>
-              </tr>
-          </table>
-          <!-- This needs to account for a tie.... -->
-          <h1 v-if="gameOver">Game over. {{endingMessage()}}</h1>
-          <button v-if="!gamePlaying || gameOver" @click="resetGame">Play {{!gamePlaying? 'Game':'Again'}}</button>
-        </div>
+      <!-- Want to show the form if showResults is false -->
+      <div v-if="!showResults">
+        <form>
+          <label>Height (Inches)</label><br>
+          <input v-model="height" type="text"><br>
+          <p>{{errorOutput(height)}}</p>
+          <label>Weight (Pounds)</label><br>
+          <input v-model="weight" type="text"><br>
+          <p>{{errorOutput(weight)}}</p>
+          <label>Age</label><br>
+          <input v-model="age" type="text"><br>
+          <p>{{errorOutput(age)}}</p>
+        </form>
+        <p>{{formErrorMessage}}</p>
+        <button @click="calculateBmi">Calculate my BMI</button>
+      </div>
+      <!-- Want to show the results if showResults is true  -->
+      <div v-if="showResults" id = "assignment-div">
+        <h2>Results</h2>
+        <h3>Your BMI: {{userBmi}}</h3>
+        <table>
+            <tr v-for ="(cat, index) in categories">
+              <!-- modify background color -->
+                <td :style="{ backgroundColor: cat === userBmiCategory? categoryColors[index]:'none'}">{{cat}}</td>
+            </tr>
+        </table>
+        <button @click="goBack">Recalculate BMI</button>
+      </div>
     </section>
   </body>
 </html>

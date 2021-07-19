@@ -10,13 +10,11 @@ th, td {
     border-bottom: 1px solid #ddd;
     cursor: default;
 }
-td:hover {
-    background-color: #f5f5f5;
-}
+
 #assignment-div {
     margin: auto;
     width: 50%;
-    border: 3px solid green;
+    border: 3px solid grey;
     padding: 10px;
     border-radius: 10px;
 }
@@ -58,8 +56,8 @@ button {
     margin: 3rem;
     border-radius: 10px;
     padding: 1rem;
-    background-color: #1b995e;
-    color: white;
+    background-color: lightblue;
+    color: black;
     text-align: center;
   }
   
@@ -81,9 +79,9 @@ button {
   #assignment button {
     font: inherit;
     cursor: pointer;
-    border: 1px solid green;
-    background-color: green;
-    color: white;
+    border: 1px solid lightblue;
+    background-color: lightblue;
+    color: black;
     padding: 0.05rem 1rem;
     margin: 0 1rem 1rem 1rem;
     box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.26);
@@ -91,7 +89,6 @@ button {
 
   #assignment button:hover,
   #assignment button:active {
-    background-color: lightgreen;
-    border-color: lightgreen;
+    border-color: darkblue;
     box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.26);
   }
