@@ -22,15 +22,15 @@
         <form>
           <label>Height (Inches)</label><br>
           <input v-model="height" type="text"><br>
-          <p>{{errorOutput(height)}}</p>
+          <p :style="{ color: 'red'}">{{errorOutput(height)}}</p>
           <label>Weight (Pounds)</label><br>
           <input v-model="weight" type="text"><br>
-          <p>{{errorOutput(weight)}}</p>
+          <p :style="{ color:'red'}">{{errorOutput(weight)}}</p>
           <label>Age</label><br>
           <input v-model="age" type="text"><br>
-          <p>{{errorOutput(age)}}</p>
+          <p :style="{ color: 'red'}">{{errorOutput(age)}}</p>
         </form>
-        <p>{{formErrorMessage}}</p>
+        <p :style = "{color: formErrorMessage === 'Valid Fields'? 'green':'red'}">{{formErrorMessage}}</p>
         <button @click="calculateBmi">Calculate my BMI</button>
       </div>
       <!-- Want to show the results if showResults is true  -->
