@@ -48,21 +48,16 @@ export default {
             this.topics.push( {id: this.key++, topicName: newTopic, subTaskCount: 0, completedTaskCount: 0}); 
             
         }, 
-        removeTopic(topicToDelete){ 
+        removeTopic(topicToDelete){  
             this.topics = this.topics.filter( obj => obj.topicName !== topicToDelete ); 
         },
-        modifyTaskCount(topicToIncrementCount, value, alreadyCompleted){
+        modifyTaskCount(topicToIncrementCount, subTaskCountVal,completedTaskCountVal ){
 
             const topic = this.topics.find( obj => obj.topicName === topicToIncrementCount );
-            // we don't want to decrement remaining task count when sub task has already been marked as completed 
-            if (alreadyCompleted){
-                return; 
-            }
-            topic.subTaskCount += value;
-            if (value === -1){
-                topic.completedTaskCount++; 
-            }
-            console.log("completed", topic.completedTaskCount); 
+            topic.subTaskCount += subTaskCountVal;
+            if (completedTaskCountVal){
+                topic.completedTaskCount+= completedTaskCountVal; 
+            } 
         }
     }
 }

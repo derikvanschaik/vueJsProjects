@@ -14,7 +14,7 @@
 
         <ul>
             <li
-                v-for="subTopic in subTopics"
+                v-for="subTopic in subTopics" 
                 :key="subTopic.subTopic"> 
                 <sub-task :subTask="subTopic.subTopic"
                           :isComplete="subTopic.isComplete" 
@@ -75,7 +75,7 @@ export default {
         }, 
         deleteSubTopic(subTopicToDelete, wasCompleted) {  
             this.subTopics = this.subTopics.filter( obj => obj.subTopic !== subTopicToDelete );
-            // don't want to delete already completed subtasks 
+            // don't want to decrement already completed subtasks 
             if (wasCompleted){
                 return; 
             }
@@ -87,7 +87,7 @@ export default {
             const completed = this.subTopics.find( obj => obj.subTopic === subTopicToComplete); 
             completed.isComplete = true; // completed 
             // decrement subTopicCount
-            this.$emit('modify-sub-topic-counter', this.topic, -1);  
+            this.$emit('modify-sub-topic-counter', this.topic, -1, 1);  
         }
     }
 }
