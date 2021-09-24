@@ -8,7 +8,9 @@
         v-for="topic in topics"
         :key="topic.id"
         :topic="topic.topicName"
-        @delete-topic="removeTopic" 
+        :subTaskCount="topic.subTaskCount"
+        @delete-topic="removeTopic"
+        @modify-sub-topic-counter="modifyTaskCount"
     >
     </task-topic>
     <h4 v-if="topics.length === 0">No Topics To Show</h4>  
@@ -28,7 +30,7 @@ export default {
         }
     }, 
     methods: {
-        addNewTopic(){
+        addNewTopic(){ 
             
             const alreadyATopic = this.topics.map( obj => obj.topicName ).includes(this.newTopic); 
             if (alreadyATopic){
@@ -38,18 +40,27 @@ export default {
             }
 
             if (this.newTopic === ""){
-                this.errorMessage = `Topic cannot be empty.`;
+                this.errorMessage = `Topic cannot be empty.`; 
                 this.newTopic =''; 
                 return; 
             }
-             
-            this.topics.push( { topicName : this.newTopic, id: this.key++ }); 
+            
+            this.topics.push( { topicName : this.newTopic, id: this.key++, subTaskCount: 0 }); 
             this.newTopic ='';
             this.errorMessage = '';  
             
         }, 
         removeTopic(topicToDelete){ 
             this.topics = this.topics.filter( obj => obj.topicName !== topicToDelete ); 
+        },
+        modifyTaskCount(topicToIncrementCount, value, alreadyCompleted){
+            console.log(alreadyCompleted); 
+            const topic = this.topics.find( obj => obj.topicName === topicToIncrementCount );
+            // we don't want to decrement remaining task count when sub task has already been marked as completed 
+            if (alreadyCompleted){
+                return; 
+            }
+            topic.subTaskCount += value;  
         }
     }
 }

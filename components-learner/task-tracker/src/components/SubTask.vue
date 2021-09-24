@@ -17,7 +17,7 @@ export default {
     }, 
     methods: {
         deleteTask(){
-            this.$emit('delete-sub-task', this.subTask); 
+            this.$emit('delete-sub-task', this.subTask, this.isComplete); 
         },
         completeTask(){
             this.$emit('complete-sub-task', this.subTask); 
