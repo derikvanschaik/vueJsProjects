@@ -10,7 +10,9 @@
             <li
                 v-for="subTopic in subTopics"
                 :key="subTopic"> 
-                {{subTopic}}
+                <sub-task :subTask="subTopic"
+                            @delete-sub-task="deleteSubTopic">
+                </sub-task> 
             </li>
         </ul>        
     </div>
@@ -18,12 +20,14 @@
 </template>
 
 <script>
+import SubTask from './SubTask.vue';
 export default {
     props:['topic'], 
-    data(){
+        components: { SubTask },
+        data(){
         return{
             newSubTopic: '', 
-            subTopicsVisible: false,
+            subTopicsVisible: false, 
             subTopics: [], 
         }
     }, 
@@ -37,6 +41,9 @@ export default {
         addNewSubTopic() {
             this.subTopics.push(this.newSubTopic);
             this.newSubTopic = ''; 
+        }, 
+        deleteSubTopic(subTopicToDelete) {
+            this.subTopics = this.subTopics.filter( subTopic => subTopic !== subTopicToDelete ); 
         }
     }
 }
