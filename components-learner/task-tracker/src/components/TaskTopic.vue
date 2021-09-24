@@ -1,12 +1,17 @@
 <template>
     <h1>{{topic}}</h1>
-    <h4>{{subTaskCount}}</h4> 
+    <h4>Remaining: {{subTaskCount}} Completed: {{completedTaskCount}}</h4> 
     <button @click="toggleSubTopics">{{subTopicsVisible? 'Hide': 'Show'}} Sub Tasks</button>
     <button @click="deleteTopic">Delete</button>
     <!-- subtopics  --> 
-    <div v-if="subTopicsVisible"> 
-        <input v-model="newSubTopic" placeholder="Add new SubTask">
-        <button @click="addNewSubTopic">Add New Subtask</button>  
+    <div v-if="subTopicsVisible">
+        <add-task 
+            taskType="SubTask"
+            :errorMessage="error"
+            @add-task = "addNewSubTopic"  
+            >
+        </add-task> 
+
         <ul>
             <li
                 v-for="subTopic in subTopics"
@@ -25,13 +30,17 @@
 </template>
 
 <script>
+import AddTask from './AddTask.vue';
 import SubTask from './SubTask.vue';
 export default {
-    props:['topic', 'subTaskCount'], 
-        components: { SubTask },
+    props:['topic', 'subTaskCount', 'completedTaskCount'], 
+    emits: ['modify-sub-topic-counter'], 
+        components: { SubTask, AddTask },
         data(){
         return{
-            newSubTopic: '', 
+            // sub task error message 
+            error: '', 
+            // sub topics variables 
             subTopicsVisible: false, 
             subTopics: [], 
         }
@@ -43,14 +52,24 @@ export default {
         toggleSubTopics() {
             this.subTopicsVisible = !this.subTopicsVisible; 
         },
-        addNewSubTopic() {
+        addNewSubTopic(newSubTopic) {
+            if (!newSubTopic.length){
+                this.error = "cannot add empty sub task"; 
+                return; 
+            }
+            if (this.subTopics.find( subtopic => subtopic.subTopic === newSubTopic) ){
+                this.error = `cannot add already existing ${newSubTopic}`;
+                return;  
+            }
+            
             this.subTopics.push(
                 {
-                    subTopic: this.newSubTopic, 
+                    subTopic: newSubTopic, 
                     isComplete: false, 
                 });
 
             this.newSubTopic = '';
+            this.error ="";  
             // increment subTopicCount
             this.$emit('modify-sub-topic-counter', this.topic, 1); 
         }, 

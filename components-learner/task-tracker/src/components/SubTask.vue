@@ -9,7 +9,8 @@
 
 <script>
 export default {
-    props:['subTask', 'isComplete'], 
+    props:['subTask', 'isComplete'],
+    emits: ['delete-sub-task', 'complete-sub-task'], 
     data() {
         return {
         }

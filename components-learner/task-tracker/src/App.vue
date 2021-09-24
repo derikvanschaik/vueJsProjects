@@ -1,66 +1,68 @@
 <template>
-    <h1>Task Tracker</h1>
-    <input placeholder="add new topic" v-model="newTopic"> 
-    <h2>{{errorMessage}}</h2>
-    <button @click="addNewTopic">Add Task Topic</button>    
+    <h1>Task Tracker</h1> 
+
+    <add-task 
+        taskType="Task Category"
+        :errorMessage="error" 
+        @add-task="addTopic">
+    </add-task> 
+
     <hr>
     <task-topic
         v-for="topic in topics"
         :key="topic.id"
         :topic="topic.topicName"
         :subTaskCount="topic.subTaskCount"
+        :completedTaskCount = "topic.completedTaskCount" 
         @delete-topic="removeTopic"
         @modify-sub-topic-counter="modifyTaskCount"
     >
     </task-topic>
-    <h4 v-if="topics.length === 0">No Topics To Show</h4>  
+
+    <h4 v-if="topics.length === 0">No Topics To Show</h4>
+
 </template>
 
 <script>
-import TaskTopic from './components/TaskTopic.vue'; 
+import AddTask from './components/AddTask.vue';
+import TaskTopic from './components/TaskTopic.vue';
 export default {
-  components: { TaskTopic },
+  components: { TaskTopic, AddTask },
     data() {
         return{
-            key: 0, 
-            newTopic : '',
-            errorMessage: '', 
+            key: 0,
+            error: '', 
             topics: [
-            ],  
+            ],
+
         }
     }, 
     methods: {
-        addNewTopic(){ 
-            
-            const alreadyATopic = this.topics.map( obj => obj.topicName ).includes(this.newTopic); 
-            if (alreadyATopic){
-                this.errorMessage = `'${this.newTopic}' already exists.`; 
-                this.newTopic =''; 
+        addTopic(newTopic){
+            const existingTopic = this.topics.find( topic => topic.topicName === newTopic); 
+            if (existingTopic){
+                this.error = `Cannot add already existing topic '${newTopic}'.`; 
                 return; 
             }
-
-            if (this.newTopic === ""){
-                this.errorMessage = `Topic cannot be empty.`; 
-                this.newTopic =''; 
-                return; 
-            }
-            
-            this.topics.push( { topicName : this.newTopic, id: this.key++, subTaskCount: 0 }); 
-            this.newTopic ='';
-            this.errorMessage = '';  
+            this.error = ''; 
+            this.topics.push( {id: this.key++, topicName: newTopic, subTaskCount: 0, completedTaskCount: 0}); 
             
         }, 
         removeTopic(topicToDelete){ 
             this.topics = this.topics.filter( obj => obj.topicName !== topicToDelete ); 
         },
         modifyTaskCount(topicToIncrementCount, value, alreadyCompleted){
-            console.log(alreadyCompleted); 
+
             const topic = this.topics.find( obj => obj.topicName === topicToIncrementCount );
             // we don't want to decrement remaining task count when sub task has already been marked as completed 
             if (alreadyCompleted){
                 return; 
             }
-            topic.subTaskCount += value;  
+            topic.subTaskCount += value;
+            if (value === -1){
+                topic.completedTaskCount++; 
+            }
+            console.log("completed", topic.completedTaskCount); 
         }
     }
 }
