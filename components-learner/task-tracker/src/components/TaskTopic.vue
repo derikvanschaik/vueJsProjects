@@ -9,9 +9,12 @@
         <ul>
             <li
                 v-for="subTopic in subTopics"
-                :key="subTopic"> 
-                <sub-task :subTask="subTopic"
-                            @delete-sub-task="deleteSubTopic">
+                :key="subTopic.subTopic"> 
+                <sub-task :subTask="subTopic.subTopic"
+                          :isComplete="subTopic.isComplete" 
+                          @delete-sub-task="deleteSubTopic"
+                          @complete-sub-task="completeSubTopic" 
+                >
                 </sub-task> 
             </li>
         </ul>        
@@ -39,11 +42,20 @@ export default {
             this.subTopicsVisible = !this.subTopicsVisible; 
         },
         addNewSubTopic() {
-            this.subTopics.push(this.newSubTopic);
+            this.subTopics.push(
+                {
+                    subTopic: this.newSubTopic, 
+                    isComplete: false, 
+                });
+
             this.newSubTopic = ''; 
         }, 
-        deleteSubTopic(subTopicToDelete) {
-            this.subTopics = this.subTopics.filter( subTopic => subTopic !== subTopicToDelete ); 
+        deleteSubTopic(subTopicToDelete) {  
+            this.subTopics = this.subTopics.filter( obj => obj.subTopic !== subTopicToDelete ); 
+        },
+        completeSubTopic(subTopicToComplete){
+            const completed = this.subTopics.find( obj => obj.subTopic === subTopicToComplete); 
+            completed.isComplete = true; // completed 
         }
     }
 }

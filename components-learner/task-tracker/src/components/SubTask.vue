@@ -9,18 +9,18 @@
 
 <script>
 export default {
-    props:['subTask'], 
-    data(){
-        return{
-            isComplete: false, 
+    props:['subTask', 'isComplete'], 
+    data() {
+        return {
         }
+        
     }, 
     methods: {
-        completeTask(){
-            this.isComplete = true; 
-        }, 
         deleteTask(){
             this.$emit('delete-sub-task', this.subTask); 
+        },
+        completeTask(){
+            this.$emit('complete-sub-task', this.subTask); 
         }
     } 
 }
