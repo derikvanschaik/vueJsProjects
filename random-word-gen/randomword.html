@@ -1,0 +1,99 @@
+<!doctype html>
+<html>
+    <head>
+
+        <title>Random Word/Image Gen</title>  
+        <link rel="stylesheet" href="styles.css">
+        <script src="https://unpkg.com/vue"></script>
+
+        <body>
+		<div id="app">
+			
+		  <a href="index.html">Back</a>
+		  <h2>Random Word/Image</h2>
+		  <p><i>{{helperMessage}}</i><p>
+
+		  <input type="range" value="numWords" min="1" max="20" v-model="numWords">
+		  <h4>Number of words: {{numWords}}</h4>
+
+		  <h5 v-if="fetchingWords">Fetching Words</h5> 
+
+		  <ol>
+		    <li v-for="word in words"> 
+		      <label>
+		        <input type="radio"
+		          name="random-words"
+		          @change ="selectWord(word)"
+		          v-bind:checked="chosenWord===word" 
+		          >  
+		        <span> 
+		          {{ word }}
+		        </span>
+		      </label>
+		    </li>
+		  </ol>
+
+		  <button @click="chooseWord">Choose Word</button>
+		  <button @click="refreshWords">New Words</button> 
+
+		  <h4 v-bind:style="{color: '#FF7F7F'}">{{error}}</h4>
+		</div> 
+
+		</body>
+
+		<script> 
+		new Vue({ 
+			  el: "#app",
+			  data: {
+			  	words: ["random", "words", "go", "here", "now"], 
+			  	chosenWord: null,
+			  	numWords: 5,
+			  	fetchingWords: false,
+			  	error: '',
+			  	helperMessage: 'Select a word of your preference', 
+			  },
+			  watch: {
+			  	numWords(){
+			  		this.helperMessage = "click 'New Words' to apply your change to the number of words."; 
+			  	}, 
+			  	chosenWord(){
+			  		if (!this.chosenWord){
+			  			return this.helperMessage = 'Select a word of your preference';
+
+			  		}
+			  		this.helperMessage = `Press the 'Choose Word' button`;  
+			  	}
+			  }, 
+			  methods: {
+			  	selectWord(word){
+			  		this.error =""; 
+			  		this.chosenWord = word;
+			  	},
+			  	async refreshWords(){
+			  		const idx  = this.words.indexOf(this.chosenWord);
+			  		this.words = [];
+			  		this.fetchingWords = true; 
+			  		// GET request using fetch with async/await -- shoutout to this kid for this api: 
+					const response = await fetch(`https://random-word-api.herokuapp.com/word/?number=${this.numWords}`);
+					const data = await response.json(); 
+			  		// update chosenWord
+			  		this.words = data;  
+			  		this.chosenWord = this.words[idx];
+			  		this.fetchingWords = false; 
+			  		 
+			  	},
+			  	chooseWord(){
+			  		this.error =""; 
+
+			  		if(this.chosenWord){
+			  			return window.open(`https://www.gettyimages.ca/search/2/image?family=creative&phrase=${this.chosenWord}`); 
+			  		}
+			  		this.error = "You must choose a word before clicking choose word."; 
+			  	}
+			  }
+		})
+        </script>
+
+
+
+</html>

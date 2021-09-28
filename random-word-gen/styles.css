@@ -1,0 +1,41 @@
+body {
+  margin: auto;
+  width: 60%;
+  border: 5px; 
+  background: #20262E; 
+  padding: 20px;
+  font-family: Helvetica;
+}
+
+#app {
+  background: #fff;
+  border-radius: 4px;
+  padding: 20px;
+  transition: all 0.2s;
+}
+
+li {
+  margin: 8px 0;
+}
+
+h2 {
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+button {
+  background-color: #1266F1;
+  border: none;
+  color: white;
+  padding: 12px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 12px;
+  border-radius: 2em;
+
+}
+button:hover {
+  background-color: navy;
+  cursor:pointer;
+}
