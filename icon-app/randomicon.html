@@ -1,0 +1,86 @@
+<!doctype html>
+<html>
+    <head>
+
+        <title>Home Page</title> 
+        <link rel="stylesheet" href="iconstyles.css">
+        <!-- Add icon library -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+		<!-- vue js import  -->
+        <script src="https://unpkg.com/vue"></script> 
+
+        <body>
+			<div id="app">
+				<div>
+					<button @click="nextIcon">New Icon</button>
+					<button @click="clearAll" class="delete">Clear All</button> 
+				</div>
+				<h4 v-if="imgs.length===0"><i>No Icons to display</i></h4>
+				<div id="icon-div">
+					<ul>
+						<icon-card
+						class="icon-card" 
+						v-for="(img, idx) in imgs"
+						:source="img.src"
+						@delete-icon="deleteIconCard"
+						>
+						</icon-card>
+					</ul>
+				</div>
+				 
+			</div> 
+
+		</body>
+
+		<script>
+		Vue.component('icon-card', {
+			emits: ['delete-icon'],  
+		  props:['source'],
+		  data: function () {
+			  	return {
+			    	hoveredOn: false, 
+			 	}
+			 }, 
+		    template: `<div>
+			    			<li @mouseover="handleHoverOn" @mouseleave="handleHoverOut"> 
+								<img :src=source height="115" width="100" />
+								<button v-show="hoveredOn" @click="deleteIcon" class="btn"><i class="fa fa-trash"></i></button>
+							</li>
+						</div>`,
+			methods: {
+				handleHoverOn: function(){
+					this.hoveredOn = true; 
+				}, 
+				handleHoverOut: function(){
+					this.hoveredOn = false; 
+				},
+				deleteIcon: function(){
+					this.$emit('delete-icon', this.source); 
+				}
+			}
+		});
+		new Vue({  
+			  el: "#app",
+			  data: {
+			  	imgs :[
+			  	],
+			  	imgNum:0,  
+			  },
+			  methods: {
+			  	nextIcon(){
+			  		this.imgNum = (this.imgNum + 1)%227;  // there are 226 images 
+			  		this.imgs.unshift({src:`img/${this.imgNum}.png`});
+			  	},
+			  	deleteIconCard(deleteSrc){
+			  		this.imgs = this.imgs.filter(img => img.src !== deleteSrc); 
+			  	}, 
+			  	clearAll(){
+			  		this.imgs = []; 
+			  	}
+			  }
+		}); 
+        </script>
+
+
+
+</html>
