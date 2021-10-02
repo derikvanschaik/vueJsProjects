@@ -1,0 +1,155 @@
+<!doctype html>
+<html>
+    <head>
+
+        <title>Home Page</title> 
+        <link rel="stylesheet" href="styles.css">
+		<!-- vue js import  -->
+        <script src="https://unpkg.com/vue"></script> 
+
+        <body>
+			<div id="app">
+				 <h1>Hello from My first Crud App</h1> 
+                 <input v-model="text" placeholder="post text">
+                 <button @click="addNewPost">Add New Post</button>
+                 <h4>{{output}}</h4>
+
+                 <ul>
+                     <post-element 
+                        v-for="post in posts"
+                        :blogtext="post.text"
+                        @delete-blog-post="deletePost(post.text)"
+                        @update-blog-post="updatePost"
+                     >
+                     </post-element>
+                 </ul>
+
+			</div> 
+
+		</body>
+
+		<script>
+        Vue.component('post-element', {
+            emits: ['update-blog-post', 'delete-blog-post'], 
+            props: ['blogtext'],
+            data: function () {
+                    return {
+                        editing: false,
+                        hoveredOn: false, 
+                        newText: '',   
+                    }
+                }, 
+                template: `<li @mouseenter="handleHover" @mouseleave = "handleHover" >
+                                <h2 v-if="!editing">{{blogtext}}</h2>
+                                <input type="text" v-if="editing" v-model="newText">
+                                <button v-if="!editing"
+                                 @click="deletePost" 
+                                 :style="{visibility: hoveredOn? 'visible': 'hidden'}"
+                                 >Delete</button>
+                                <button :style="{visibility: hoveredOn? 'visible': 'hidden'}"
+                                 @click="updateHandler">{{editing? 'Submit':''}} Update</button>
+                                <button v-if="editing" @click="discardUpdate">Discard Changes</button>  
+                            </li>`,
+                methods: {
+                    updateHandler :function(){
+                        this.editing = !this.editing; 
+                        if (this.editing){
+                            return; 
+                        }
+                        // emit to parent to update this.blogtext to new updated this.newtext 
+                        this.$emit('update-blog-post', this.blogtext, this.newText);
+                        this.newText = ""; // re init new text  
+                    },
+                    discardUpdate :function(){
+                        this.editing = false;
+                        this.newText = ""; 
+                    },
+                    deletePost : function(){
+                        this.$emit('delete-blog-post', this.blogtext);  
+                    }, 
+                    handleHover : function(){
+                        this.hoveredOn = !this.hoveredOn; 
+                    }
+                }
+		});
+
+
+		new Vue({  
+			  el: "#app",
+			  data: {
+			  	count: 0 ,
+                text: '', 
+                posts: [],
+                output: ''
+			  },
+              async created(){
+                this.fetchPosts(); 
+              }, 
+              methods:{
+                  async fetchPosts(){
+                    const result = await fetch("http://localhost:3000/api/posts");
+                    const data = await result.json(); 
+                    this.posts = data;  
+                  },
+                  async fetch(fetchMethod, data){ 
+                    const response = await fetch("http://localhost:3000/api/posts", {
+                        method: fetchMethod,
+                        mode: 'cors',
+                        cache: 'no-cache', 
+                        credentials: 'same-origin', 
+                        headers: {
+                        'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(data) 
+                    });
+                    return response; 
+                  }, 
+                  async addNewPost(){
+                    if (!this.text.length){
+                        this.output = 'Post Text cannot be empty'; 
+                        return; 
+                    }
+                    const data = {text: this.text}; // data we are submitting in post
+                    // post data to backend 
+                    const response = await this.fetch('POST', data); 
+                    const returnData = await response.json();  
+                    this.output = returnData.status; 
+                    this.text = ''; // re init text
+                    if (this.output !== 'Successfully saved.'){
+                        return;  
+                    }
+                    // succesful 
+                    this.posts.push(data);
+                  }, 
+                  async deletePost(postText){
+                      const data = {text: postText}; 
+                      const response = await this.fetch('DELETE', data);
+                      const returnData = await response.json(); 
+                      this.output = returnData.status; 
+                      if (this.output !== 'Successfully deleted.'){
+                          return; 
+                      }
+                      // succesful deletion 
+                      this.posts = this.posts.filter(post => post.text !== postText); 
+                  },
+                  async updatePost(postText, newText){  
+                      const data = {text: postText, newText: newText};
+                      const response = await this.fetch('PATCH', data); 
+                      const returnData = await response.json(); 
+                      this.output = returnData.status;
+                      console.log(this.output); 
+                      if (this.output !== 'Succesfully updated.'){
+                          return; 
+                      }
+                      // succesful update -- update it into the front end 
+                      const updatedPost = this.posts.find( post => post.text === postText);
+                      updatedPost.text = newText;
+                  }
+
+              }
+		}); 
+        </script>
+
+
+
+</html>
